@@ -75,7 +75,26 @@ class Mission:
 
     @classmethod
     def from_csv(cls, file_name: str):
-        # You are required to implement this method
+        import pandas as pd
+        import os 
+        file_path = os.path.join("..","data",file_name)
+        try:
+            df = pd.read_csv(file_path)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {file_path} does not exist")
+        except pd.errors.EmptyDataError:
+            raise ValueError("The file is empty")
+        except pd.errors.ParserError:
+            raise ValueError("Error parsing file, check file type and format")
+        required_columns = ["reference","cave_height","cave_depth"]
+        for column in required_columns:
+            if column not in df.columns:
+                raise ValueError("Missing required column {column}")
+            reference = df["reference"].to_numpy()
+            cave_height = df["cave_height"].to_numpy()
+            cave_depth = df["cave_depth"].to_numpy()
+            return cls(reference, cave_height, cave_depth)
+
         pass
 
 
